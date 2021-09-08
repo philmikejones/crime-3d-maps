@@ -38,8 +38,7 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# Raw data
+# Data
 /data/external/
-
-# Processed data
+/data/interim/*.rds
 /data/processed/
