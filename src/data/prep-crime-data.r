@@ -3,17 +3,23 @@
 # for all forces
 dir.create("data/external/crimes", showWarnings = FALSE, recursive = TRUE)
 
-unzip(
-    "data/external/926a6fb5fc9ef52299cbe0134e9faa7efbd3d253.zip",
-    exdir = "data/external/crimes"
-)
+if (length(list.files("data/external/crimes", recursive = TRUE)) < 1L)
+{
+    unzip(
+        "data/external/926a6fb5fc9ef52299cbe0134e9faa7efbd3d253.zip",
+        exdir = "data/external/crimes"
+    )
+}
 
-download.file(
-    "https://data.police.uk/data/boundaries/force_kmls.zip",
-    destfile = "data/external/force_kmls.zip"
-)
+if (!file.exists("data/external/force_kmls.zip"))
+{
+    download.file(
+        "https://data.police.uk/data/boundaries/force_kmls.zip",
+        destfile = "data/external/force_kmls.zip"
+    )
 
-unzip(
-    "data/external/force_kmls.zip",
-    exdir = "data/external"
-)
+    unzip(
+        "data/external/force_kmls.zip",
+        exdir = "data/external"
+    )
+}
