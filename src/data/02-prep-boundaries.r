@@ -29,13 +29,13 @@ boundaries =
     mutate(area = sf::st_area(boundaries)) %>%
     arrange(area) %>%
     mutate(id = row_number()) %>%
-    select(id, area) %>%
+    select(id) %>%
     filter(id != 44) %>%
-    st_zm(drop = TRUE)
+    st_zm(drop = TRUE) %>%
+    st_make_valid()
 
 # NB this is lengthS not length
 boundaries$num_burglaries = lengths(st_intersects(boundaries, crimes))
-
 boundaries = st_transform(boundaries, crs = 27700)
 
 dir.create("data/processed", showWarnings = FALSE, recursive = TRUE)
