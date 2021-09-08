@@ -20,6 +20,7 @@ crimes = bind_rows(crimes)
 crimes = 
     crimes %>%
     filter(`Crime type` == "Burglary") %>%
+    filter(!is.na(Longitude)) %>%
     select(`Crime ID`, Longitude, Latitude, `LSOA code`, `Crime type`)
 
 dir.create("data/interim", showWarnings = FALSE, recursive = TRUE)
