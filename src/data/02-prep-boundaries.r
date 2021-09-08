@@ -36,5 +36,7 @@ boundaries =
 # NB this is lengthS not length
 boundaries$num_burglaries = lengths(st_intersects(boundaries, crimes))
 
+boundaries = st_transform(boundaries, crs = 27700)
+
 dir.create("data/processed", showWarnings = FALSE, recursive = TRUE)
 sf::st_write(boundaries, "data/processed/boundaries.gpkg", delete_layer = TRUE)
