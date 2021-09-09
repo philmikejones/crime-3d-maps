@@ -8,35 +8,38 @@ crimes = st_as_sf(crimes, coords = c("Longitude", "Latitude"))
 crimes = st_set_crs(crimes, 4326)
 
 
-if (!file.exists("data/external/force_kmls.zip"))
+# Open Geography Portal - last updated 2017-10-09
+# https://www.arcgis.com/sharing/rest/content/items/c86cdd7f86264f369789752121f0a1c4/info/metadata/metadata.xml?format=default&output=html
+if (!file.exists("data/external/boundaries.geojson"))
 {
-    download.file(
-        "https://data.police.uk/data/boundaries/force_kmls.zip",
-        destfile = "data/external/force_kmls.zip"
-    )
-
-    unzip(
-        "data/external/force_kmls.zip",
-        exdir = "data/external"
-    )
+    url = "https://opendata.arcgis.com/datasets/c86cdd7f86264f369789752121f0a1c4_0.geojson"
+    download.file(url, destfile = "data/external/boundaries.geojson")
 }
 
-boundaries = list.files("data/external/force kmls", pattern = ".kml", full.names = TRUE)
-boundaries = lapply(boundaries, sf::read_sf)
-boundaries = bind_rows(boundaries)
-boundaries = 
+boundaries = sf::read_sf("data/external/boundaries.geojson")
+boundaries =
     boundaries %>%
-    mutate(area = sf::st_area(boundaries)) %>%
-    arrange(area) %>%
-    mutate(id = row_number()) %>%
-    select(id) %>%
-    filter(id != 44) %>%
-    st_zm(drop = TRUE) %>%
-    st_make_valid()
+    rename(
+        id   = OBJECTID,
+        code = PFA16CD,
+        name = PFA16NM
+    ) %>%
+    select(id, code, name)
+
+assert_that(all(st_is_valid(boundaries)))
 
 # NB this is lengthS not length
 boundaries$num_burglaries = lengths(st_intersects(boundaries, crimes))
 boundaries = st_transform(boundaries, crs = 27700)
+
+if (!all(st_is_valid(boundaries)))
+{
+    boundaries = st_make_valid(boundaries)
+}
+
+assert_that(all(st_is_valid(boundaries)))
+
+boundaries = rmapshaper::ms_simplify(boundaries)
 
 dir.create("data/processed", showWarnings = FALSE, recursive = TRUE)
 sf::st_write(boundaries, "data/processed/boundaries.gpkg", delete_layer = TRUE)
