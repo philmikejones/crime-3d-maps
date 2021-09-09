@@ -28,9 +28,6 @@ msoa = bind_rows(
     read_sf("data/external/wales_msoa_2011.shp")
 )
 
-msoa = suppressWarnings(st_centroid(msoa))
-
-
 population = 
     read_excel("data/external/msoa-population-estimates-2019.xlsx", skip = 6) %>% 
     rename(
@@ -44,4 +41,4 @@ population = left_join(msoa, population, by = c("code" = "msoa_code"))
 assert_that(!any(is.na(population$population)))
 
 saveRDS(population, "data/interim/population.rds")
-write_sf(population, "data/processed/population_msoa_centroids.gpkg")
+write_sf(population, "data/processed/population_msoa.gpkg")
