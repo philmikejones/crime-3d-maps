@@ -44,3 +44,4 @@ population = left_join(msoa, population, by = c("code" = "msoa_code"))
 assert_that(!any(is.na(population$population)))
 
 saveRDS(population, "data/interim/population.rds")
+write_sf(population, "data/processed/population_msoa_centroids.gpkg")
