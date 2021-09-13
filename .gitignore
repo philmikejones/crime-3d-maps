@@ -42,3 +42,6 @@ vignettes/*.pdf
 /data/external/
 /data/interim/*.rds
 /data/processed/
+
+# Compiled documentation
+docs/index.html
